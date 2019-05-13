@@ -101,20 +101,18 @@ export default {
   color: #44afd0;
 }
 .ms-login {
-  text-align: center;
-}
-.ms-login img {
-  text-align: center;
-}
-.ms-login {
   position: absolute;
   left: 50%;
   top: 40%;
   width: 300px;
   margin: -150px 0 0 -190px;
   padding: 40px;
+  text-align: center;
   border-radius: 5px;
   background: #fff;
+}
+.ms-login img {
+  text-align: center;
 }
 .login-btn {
   text-align: center;
