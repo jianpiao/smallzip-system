@@ -1,7 +1,7 @@
 <template>
   <footer class="footer">
-    <span>版权归小飘飘所有</span>
-    <span>© 2019 Theme designed by ICE</span>
+    <span>作者 小飘飘/smallzip</span>
+    <span>© 2019 Theme designed by ICE/Element</span>
   </footer>
 </template>
 

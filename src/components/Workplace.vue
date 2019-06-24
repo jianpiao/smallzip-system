@@ -42,7 +42,7 @@
         <el-table-column prop="date" label="截止日期" width="150"></el-table-column>
         <el-table-column prop="pro" label="进度">
           <template slot-scope="scope">
-            <el-progress :percentage="scope.row.pro" :status="scope.$index == 0 ? 'success' : ''"></el-progress>
+            <el-progress :percentage="scope.row.pro" :status="scope.$index == 0 ? 'success' : 'text'"></el-progress>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="负责人" width="150"></el-table-column>

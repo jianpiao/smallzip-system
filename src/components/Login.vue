@@ -80,7 +80,8 @@ export default {
   height: 100%;
   background-color: #242f42;
   background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555562444678&di=2e26bf783f25fcef4ac7a5addc9f0257&imgtype=0&src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201408%2F22%2F105929p5qdodm5qm4mfjf6.jpg');
-  background-size: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
   text-align: center;
   -webkit-filter: blur(3px);
   -moz-filter: blur(3px);
@@ -101,18 +102,20 @@ export default {
   color: #44afd0;
 }
 .ms-login {
+  text-align: center;
+}
+.ms-login img {
+  text-align: center;
+}
+.ms-login {
   position: absolute;
   left: 50%;
   top: 40%;
   width: 300px;
   margin: -150px 0 0 -190px;
   padding: 40px;
-  text-align: center;
   border-radius: 5px;
   background: #fff;
-}
-.ms-login img {
-  text-align: center;
 }
 .login-btn {
   text-align: center;

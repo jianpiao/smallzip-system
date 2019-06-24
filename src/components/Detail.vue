@@ -1,5 +1,5 @@
 <template>
-  <div class="detail" v-loading.fullscreen.lock="fullscreenLoading">
+  <div class="detail">
     <div class="handle-box">
       <el-input v-model="keyWord" placeholder="筛选关键词" class="handle-input mr10" suffix-icon="el-icon-search"></el-input>
       <el-button type="primary" icon="el-icon-plus" class="handle-button" @click="handleAdd">添加</el-button>
@@ -78,6 +78,7 @@
 <script>
 import search from '../plugins/search';
 import Footer from './Footer';
+import { detailGet,detailDelete,detailModify,detailAdd } from '../api/index';
 export default {
   name: "Detail",
   data() {
@@ -86,7 +87,6 @@ export default {
       keyWord: '',
       multipleSelection: [],
       dialogFormVisible: false,
-      fullscreenLoading:false,
       dialogType:'',
       form: {
         id: "",
@@ -109,17 +109,19 @@ export default {
     //搜素过滤
     tableData() {
       return this.getSearch(this.data,this.keyWord)
+    },
+    fullscreenLoading() {
+      return this.$store.getters.fullscreenLoading
     }
   },
   methods: {
     //  请求数据
     getData() {
-      this.$http
-        .post("http://www.smallzip.com/test/public/index.php/index/Heifeng/get",
-        {
+      detailGet.data = {
           page:this.currentPage,
           size:this.pageSize
-        })
+      }
+      this.$http(detailGet)
         .then(res => {
           if(res.data.code == 200){
             this.pageTotal = res.data.data.total
@@ -175,16 +177,17 @@ export default {
     },
     //  提交删除内容
     submitDetailForm(id) {
-      this.$http
-      .post("http://www.smallzip.com/test/public/index.php/index/Heifeng/delete_data",{id})
+      detailDelete.data = {id}
+      this.$http(detailDelete)
       .then(res => {
         this.$message({
           message: '删除成功',
           type: 'success'
         });
-        this.data = res.data.data
+        this.getData()
       })
       .catch(() => {
+        this.$store.dispatch('fullscreenLoading',false)
         this.$message.error('数据请求失败哦~');
       });
     },
@@ -192,21 +195,21 @@ export default {
     submitForm() {
       let dataType = this.dialogType === 'edit' ? 'modify_data' : 'add_data'
       if(this.form.name.length > 0 && this.form.address.length > 0){
-        this.fullscreenLoading = true;
+        this.dialogType === 'edit' ? detailModify.data = this.form : detailAdd.data = this.form
+        this.$store.dispatch('fullscreenLoading',true)
         this.dialogFormVisible = !this.dialogFormVisible
-        this.$http
-        .post(`http://www.smallzip.com/test/public/index.php/index/Heifeng/${dataType}`,this.form)
+        this.$http(this.dialogType === 'edit' ? detailModify: detailAdd)
         .then(res => {
           this.form = {id:'',name:'',address:''}
-          this.data = res.data.data
-          this.fullscreenLoading = false
           this.$message({
             message: this.dialogType === 'edit' ? '修改成功' : '添加成功',
             type: 'success'
-          });
+          })
+          this.getData()
         })
         .catch(() => {
           this.$message.error('数据请求失败哦~');
+          this.$store.dispatch('fullscreenLoading',false)
         });
       } else {
         this.$message.error('输入内容不能为空哦~');

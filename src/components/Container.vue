@@ -49,7 +49,7 @@
       <!-- 头部 -->
       <el-container>
         <el-header class="header">
-          <div style="width:100%">
+          <div style="flex:1;">
             <el-breadcrumb separator-class="el-icon-arrow-right">
               <el-breadcrumb-item v-for="(item, index) in breadcrumb" :key="index">{{item}}</el-breadcrumb-item>
             </el-breadcrumb>
@@ -88,11 +88,13 @@
         </div>
       </el-container>
     </el-container>
+    <!-- <MusicPlay/> -->
   </div>
 </template>
 
 <script>
-import { Loading } from 'element-ui';
+import { Loading } from 'element-ui'
+import routes from '@/router/index'
 export default {
   name: "Container",
   data() {
@@ -101,52 +103,13 @@ export default {
       editableTabs: [],
       breadcrumb:['首页'], //  面包屑
       screenHeight: 600, //  屏幕高度
-      items: [
-        //  路由地址
-        {
-          icon: "el-icon-location",
-          index: "home",
-          title: "首页"
-        },
-        {
-          icon: "el-icon-location",
-          index: "detail",
-          title: "详情"
-        },
-        {
-          icon: "el-icon-location",
-          index: "2",
-          title: "人力资源",
-          subs: [
-            {
-              index: "other",
-              title: "任务进度"
-            },
-            {
-              index: "test",
-              title: "文件上传"
-            },{
-              index: "workplace",
-              title: "工作台"
-            },
-            {
-              index: "member",
-              title: "员工管理"
-            }
-          ]
-        },
-        {
-          icon: "el-icon-location",
-          index: "form",
-          title: "表单"
-        }
-      ],
+      items: [],
       headerList:[
-        {icon:'el-icon-location',title:'项目地址'},
         {icon:'el-icon-question',title:'公告'},
         {icon:'el-icon-warning',title:'意见'},
         {icon:'el-icon-star-on',title:'退出'}
-        ]
+        ],
+        curRouter: ''  //  当前的路由名称
     };
   },
   mounted() {
@@ -154,12 +117,56 @@ export default {
     this.screenHeight = document.documentElement.clientHeight;
     window.onresize = () => {
       this.screenHeight = document.documentElement.clientHeight;
-    };
+    }
+    //  获取路由
+    let tempRouter = routes.options.routes[2].children
+    let tempS = false
+    let tempI = 0
+    tempRouter.forEach((item,index) => {
+      //  首先排除type为not的
+      if (item.type != 'not') {
+        tempS ? '' : tempI = index //  不存在则记录
+        if(item.subIndex || item.subTitle || item.subIcon) {
+          tempS = false
+          this.items.forEach((sItem,sIndex) => {
+            if (sItem.index == item.subIndex || sItem.title == item.subIndex) {
+              tempS = true
+            }
+          })
+          //  如果已经存在
+          if (tempS) {
+            this.items[tempI - 1].subs.push({
+              index: item.path.substr(1),
+              title: item.title,
+            })
+          } else {
+            this.items.push({
+              icon: item.subIcon,
+              index: item.subIndex,
+              title: item.subTitle,
+              subs:[]
+            })
+          }
+        } else {
+          this.items.push({
+            icon: item.icon,
+            index: item.path.substr(1),
+            title: item.title
+          })
+        }
+      }
+    })
+    this.items = this.items.filter(e => e.index !== '')
   },
   computed: {
     onRoutes() {
       let index = this.$route.path.replace('/','')
+      if (index == `singerDetail` || 
+          index == `cmSingerDetail` ||
+          index == `cmLogin` || 
+          index == `cmSingerHotList`) return;
       this.addTab(index)
+      this.curRouter = index
       return index
     },
     fullscreenLoading() {
@@ -179,40 +186,35 @@ export default {
     },
     //  退出登陆
     loginDown(index) {
-      if (index == 2) {
+      if (index == 3) {
         this.$router.replace("/login");
       }
     },
     //  点击头部tab
     tabClick(tab) {
-      new Promise(() => {
-        this.$store.dispatch('fullscreenLoading',true)
-      })
-      this.routerName(tab.name)
+      //  如果点击的路由和当前的路由一致则不需要跳转
+      if (tab.name == this.curRouter) return;
+      this.$store.dispatch('fullscreenLoading',true)
       this.changeBreadcrumb(tab.name)
       this.editableTabsValue = tab.name
       this.$router.replace(tab.name)
     },
     //  添加头部路由
     addTab(targetName) {
-      new Promise(() => {
-        this.$store.dispatch('fullscreenLoading',true)
-      })
       //  判断没有找到tab导航则添加
       if(!this.editableTabs.find(tab => tab.name === targetName)) {
         this.editableTabs.push({
           title: this.routerName(targetName),
           name: targetName
-        });
+        })
+        this.$store.dispatch('fullscreenLoading',true)
       }
       this.changeBreadcrumb(targetName)
       this.editableTabsValue = targetName;
     },
     //  移除头部tab
     tabRemove(targetName) {
-      new Promise(() => {
-        this.$store.dispatch('fullscreenLoading',true)
-      })
+      this.$store.dispatch('fullscreenLoading',true)
       let tabs = this.editableTabs;
         let activeName = this.editableTabsValue;
         if (activeName === targetName) {
@@ -227,7 +229,6 @@ export default {
           });
         }
         //  回到上一个tab
-        this.routerName(activeName)
         this.changeBreadcrumb(activeName)
         this.editableTabsValue = activeName;
         this.editableTabs = this.editableTabs.filter(tab => tab.name !== targetName);
@@ -235,53 +236,28 @@ export default {
     },
     //  路由名称过滤
     routerName(i) {
-      let routers = {
-        'container':'首页',
-        'home':'首页',
-        'detail':'详情',
-        'other':'任务进度',
-        'form':'表单',
-        'test':'文件上传',
-        'workplace':'工作台',
-        'member':'员工管理'
-      }
-      return routers[i]
+      return routes.options.routes[2].children.find(e => e.path.substr(1) == i).title
     },
     //  面包屑导航
     changeBreadcrumb(i) {
-      //  改变面包屑
-      switch (i) {
-        case 'container':
-          this.breadcrumb = ['首页']
-          break;
-        case 'home':
-          this.breadcrumb = ['首页']
-          break;
-          case 'detail':
-          this.breadcrumb = ['详情']
-          break;
-        case 'other':
-          this.breadcrumb = ['人力资源','任务进度']
-          break;
-        case 'form':
-          this.breadcrumb = ['表单']
-          break;
-        case 'test':
-          this.breadcrumb = ['人力资源','文件上传']
-          break;
-        case 'workplace':
-          this.breadcrumb = ['人力资源','工作台']
-          break;
-        case 'member':
-          this.breadcrumb = ['人力资源','员工管理']
-          break;
-        default:
-          break;
-      }
+      this.breadcrumb = []
+      this.items.map((item,index) => {
+        if (item.subs) {
+          //  path包含
+          item.subs.forEach(e => {
+            if (e.index == i) {
+              this.breadcrumb.push(item.title)
+              this.breadcrumb.push(e.title)
+            }
+          })
+        } else {
+          item.index == i ? this.breadcrumb.push(item.title) : null
+        }
+      })
     },
     jump(i) {
       if(i==0){
-        window.open('https://github.com/jianpiao/glsyj_management')
+        // shell.openExternal('https://github.com/jianpiao/smallzip-system')
       }
     }
   }

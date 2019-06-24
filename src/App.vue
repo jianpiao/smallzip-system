@@ -17,4 +17,13 @@ body{
   border: 0;
   min-width: 1000px;
 }
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style-type: none;
+}
 </style>
