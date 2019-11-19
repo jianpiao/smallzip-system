@@ -6,25 +6,25 @@ export const xima = {
 //   Detail.vue
 export const detailGet = {
     method: 'post',
-    url: 'http://www.smallzip.com/test/public/index.php/index/Heifeng/get',
+    url: 'localhost/test/public/index.php/index/Heifeng/get',
     data:{}
 }
 
 export const detailDelete = {
     method: 'post',
-    url: 'http://www.smallzip.com/test/public/index.php/index/Heifeng/delete_data',
+    url: 'localhost/test/public/index.php/index/Heifeng/delete_data',
     data:{}
 }
 
 export const detailModify = {
     method: 'post',
-    url: 'http://www.smallzip.com/test/public/index.php/index/Heifeng/modify_data',
+    url: 'localhost/test/public/index.php/index/Heifeng/modify_data',
     data:{}
 }
 
 export const detailAdd = {
     method: 'post',
-    url: 'http://www.smallzip.com/test/public/index.php/index/Heifeng/add_data',
+    url: 'localhost/test/public/index.php/index/Heifeng/add_data',
     data:{}
 }
 

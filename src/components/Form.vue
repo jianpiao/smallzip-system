@@ -3,7 +3,11 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>新建表单</span>
-        <el-button style="float: right; padding: 3px 0" type="text" @click="resetForm('ruleForm')">重置</el-button>
+        <el-button
+          style="float: right; padding: 3px 0"
+          type="text"
+          @click="resetForm('ruleForm')"
+        >重置</el-button>
       </div>
       <el-form
         :model="ruleForm"
@@ -64,11 +68,11 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <Footer/>
+    <Footer />
   </div>
 </template>
 <script>
-import Footer from './Footer';
+import Footer from "./Footer";
 export default {
   name: "Form",
   data() {
@@ -120,21 +124,25 @@ export default {
         ],
         desc: [{ required: true, message: "请填写活动形式", trigger: "blur" }]
       }
-    }
+    };
   },
   components: {
-      Footer
+    Footer
   },
   mounted() {
-    this.$store.dispatch('fullscreenLoading',false)
+    this.$store.dispatch("fullscreenLoading", false);
   },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
+          this.$notify({
+            title: "成功",
+            message: "提交表单成功!",
+            type: "success"
+          });
         } else {
-        //   console.log("error submit!!");
+          //   console.log("error submit!!");
           return false;
         }
       });

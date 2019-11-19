@@ -7,61 +7,67 @@
       <ul>
         <li v-for="(item,index) in data" :key="index">
           <div class="li-header">
-              <img :src="item.coverLarge">
+            <img :src="item.coverLarge" />
           </div>
           <div class="li-content">
-              <p>{{item.title}}</p>
+            <p>{{item.title}}</p>
           </div>
           <div class="li-audio">
-              <audio controls="controls">
-                  <source :src="item.playUrl64" type="audio/mpeg">
-              </audio>
+            <audio controls="controls">
+              <source :src="item.playUrl64" type="audio/mpeg" />
+            </audio>
           </div>
-      </li>
+        </li>
       </ul>
     </main>
   </div>
 </template>
 
 <script>
-import {xima} from '../api/index'
-  export default {
-    name: 'xima',
-    data() {
-      return {
-        data:[]
-      }
+import { xima } from "../api/index";
+export default {
+  name: "xima",
+  data() {
+    return {
+      data: []
+    };
+  },
+  mounted() {
+    this.getData();
+  },
+  methods: {
+    async get() {
+      return new Promise((resolve, reject) => {
+        this.$http(xima)
+          .then(res => {
+            resolve(res.data.data.list);
+            this.data = res.data.data.list;
+          })
+          .catch(err => {
+            this.$notify.error({
+              title: "错误",
+              message: "跨域请求失败啦！"
+            });
+            reject(err);
+          });
+      });
     },
-    mounted() {
-      this.getData()
+    async getData() {
+      await this.get();
+      this.$store.dispatch("fullscreenLoading", false);
     },
-    methods: {
-      async get() {
-        return new Promise((resolve,reject) => {
-            this.$http(xima).then(res => {
-                resolve(res.data.data.list)
-                this.data = res.data.data.list
-            }).catch(err => {
-                reject(err)
-            })
-        })
-      },
-      async getData() {
-          await this.get()
-          this.$store.dispatch('fullscreenLoading',false)
-      },    
-      jumpNews() {
-        this.$router.push('/news')
-      }
+    jumpNews() {
+      this.$router.push("/news");
     }
   }
+};
 </script>
 
 <style scoped>
 #wrapper {
-    background-color: #242d40;
-    margin: 0;
-    padding: 20px;
+  background-color: #242d40;
+  margin: 0;
+  padding: 20px;
 }
 
 .header {
@@ -72,64 +78,61 @@ import {xima} from '../api/index'
 }
 
 .title {
-    color: #fff;
+  color: #fff;
 }
 
 ul {
-    padding: 0;
-    margin: 0;
-    column-gap:0;
-    column-count: 2;
+  padding: 0;
+  margin: 0;
+  column-gap: 0;
+  column-count: 2;
 }
 li {
-    background-color: #fff;
-    list-style-type: none;
-    border-radius: 5px;
-    break-inside: avoid;
-    margin: 20px;
+  background-color: #fff;
+  list-style-type: none;
+  border-radius: 5px;
+  break-inside: avoid;
+  margin: 20px;
 }
 
 .li-content {
-   padding: 20px;
+  padding: 20px;
 }
 
 .li-audio {
-    width:100%;
-    padding: 0 0 20px 0;
+  width: 100%;
+  padding: 0 0 20px 0;
 }
-
 
 .li-audio > audio {
-    width: 100%;
-    outline-style:none;
+  width: 100%;
+  outline-style: none;
 }
 
-
 .li-header > img {
-    width: 100%;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+  width: 100%;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 @media (min-width: 1300px) {
   ul {
-        column-count: 4;
-    }
+    column-count: 4;
+  }
 }
 @media (min-width: 992px) and (max-width: 1300px) {
-    ul {
-        column-count: 3;
-    }
+  ul {
+    column-count: 3;
+  }
 }
 @media (min-width: 768px) and (max-width: 991px) {
-    ul {
-        column-count: 2;
-    }
+  ul {
+    column-count: 2;
+  }
 }
 @media (max-width: 767px) {
-    ul {
-        column-count: 1;
-    }
+  ul {
+    column-count: 1;
+  }
 }
-
 </style>
