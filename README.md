@@ -20,6 +20,10 @@ npm run build
 npm run test
 ```
 
+![展示图1](https://github.com/jianpiao/smallzip-system/blob/master/src/assets/展示图1.png)
+![展示图2](https://github.com/jianpiao/smallzip-system/blob/master/src/assets/展示图2.png)
+![展示图3](https://github.com/jianpiao/smallzip-system/blob/master/src/assets/展示图3.png)
+
 ### Lints and fixes files
 ```
 npm run lint
