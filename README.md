@@ -1,21 +1,21 @@
-# element-app
+# element-app 功能集成项目
 
-## Project setup
+## 项目依赖安装
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 启动项目,支持热更新
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 打包构建项目
 ```
 npm run build
 ```
 
-### Run your tests
+### 进行单元测试
 ```
 npm run test
 ```
